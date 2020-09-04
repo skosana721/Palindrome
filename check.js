@@ -22,10 +22,29 @@ const checkCashRegister =(price, cash, cid)=>{
     drawer = drawer.toFixed(2);
     let customerChange = cash - price;
     let Change = [];
-    if (changeToGive > drawer) {
+    if (customerChange> drawer) {
         return { status: "INSUFFICIENT_FUNDS", change: change };
       } else if (customerChange.toFixed(2) === drawer) {
         return { status: "CLOSED", change: cid };
+      }else {
+      cid = cid.reverse();
+      for (let elem of cid) {
+        let temp = [elem[0], 0];
+        while (customerChange >= amount[elem[0]] && elem[1] > 0) {
+          temp[1] += amount[elem[0]];
+          elem[1] -= amount[elem[0]];
+          customerChange-= amount[elem[0]];
+          customerChange = customerChange.toFixed(2);
+        }
+        if (temp[1] > 0) {
+          change.push(temp);
+        }
       }
+    }
+    if (customerChange > 0) {
+      return { status: "INSUFFICIENT_FUNDS", change: [] };
+    }
+    return { status: "OPEN", change: change};
+  }
     } 
     console.log(checkCashRegister())
